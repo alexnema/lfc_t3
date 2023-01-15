@@ -96,7 +96,7 @@ bool Grammar::containsStartSymbolAlone() const {
     return false;
 }
 
-bool Grammar::verifyProduction(unsigned int index) const 
+bool Grammar::verifyProduction(unsigned int index) const
 {
     std::pair<std::string, std::string> currentProduction = productions[index];
     // left - one non-terminal symbol 
@@ -120,9 +120,9 @@ bool Grammar::verifyProduction(unsigned int index) const
 
 void Grammar::removeUnitProductions()
 {
-    bool stillUnitProduction = false;
+    bool stillUnitProduction = true;
     std::vector<std::pair<std::string, std::string>> newProductions;
-    do
+    while (stillUnitProduction)
     {
         stillUnitProduction = false;
         newProductions.clear();
@@ -154,41 +154,7 @@ void Grammar::removeUnitProductions()
             }
         }
     }
-    while (stillUnitProduction);
 }
-
-
-//void Grammar::reduceCFG()
-//{
-//    std::unordered_set<std::string> reachableSymbols;
-//
-//    // Find reachable symbols
-//    reachableSymbols.insert("S"); // Start symbol is always reachable
-//    bool changed = false;
-//    do
-//    {
-//        changed = false;
-//        for (const auto& production : productions)
-//        {
-//            if (reachableSymbols.count(production.first))
-//            {
-//                for (const auto& symbol : production.second)
-//                {
-//                    std::string symbolString = "";
-//                    symbolString += symbol;
-//                    if (reachableSymbols.count(symbolString) == 0)
-//                    {
-//                        reachableSymbols.insert(symbolString);
-//                        changed = true;
-//                    }
-//                }
-//            }
-//        }
-//    } while (changed);
-//    std::cout << "SET: ";
-//    for (auto it : reachableSymbols)
-//        std::cout << it << " ";
-//}
 
 
 bool Grammar::isContextFree() const
@@ -199,6 +165,147 @@ bool Grammar::isContextFree() const
         }
     }
     return true;
+}
+
+void Grammar::simplifyCFG()
+{
+    removeUnitProductions();
+    removeSymbolsThatDontGenerateTerminals();
+    removeUnreachableSymbols();
+}
+
+void Grammar::removeSymbolsThatDontGenerateTerminals()
+{
+    std::vector<char>usefulNonTerminals;
+    for (const auto& production : productions)
+    {
+        //daca in dreapta e doar 1 terminal
+        if (production.second.size() == 1 && std::count(terminal.begin(), terminal.end(), production.second[0]))
+        {
+            usefulNonTerminals.push_back(production.first[0]);
+        }
+    }
+    bool changed = true;
+    while (changed)
+    {
+        changed = false;
+        //daca in dreapta sunt doar neterminale useful sau terminale
+        for (const auto& production : productions)
+        {
+            bool ok = true;
+            for (const char& symbol : production.second)
+            {
+                if (std::count(usefulNonTerminals.begin(), usefulNonTerminals.end(), symbol) == 0 && std::count(terminal.begin(), terminal.end(), symbol) == 0)
+                {
+                    ok = false;
+                }
+            }
+            if (ok && std::count(usefulNonTerminals.begin(), usefulNonTerminals.end(), production.first[0]) == 0)
+            {
+                usefulNonTerminals.push_back(production.first[0]);
+                changed=true;
+            }
+        }
+    }
+
+    std::vector<std::pair<std::string, std::string>> newProductions;
+    for (const auto& production : productions) 
+    {
+        //in stanga sa fie un neterminal useful
+        if (std::count(usefulNonTerminals.begin(), usefulNonTerminals.end(), production.first[0])) 
+        {
+            bool ok = true;
+            for (const auto& symbol : production.second)
+            {
+                //in dreapta sa fie numai neterminale useful sau terminale
+                if (std::count(usefulNonTerminals.begin(), usefulNonTerminals.end(), symbol) == 0 && std::count(terminal.begin(), terminal.end(), symbol) == 0)
+                {
+                    ok = false;
+                }
+            }
+            if (ok)
+            {
+                newProductions.push_back(production);
+            }
+        }
+    }
+    productions = newProductions;
+    nonTerminal = usefulNonTerminals;
+}
+
+void Grammar::removeUnreachableSymbols()
+{
+    std::vector<char>reachableSymbols;
+    reachableSymbols.push_back(startSymbol);
+    //adaug in reachable toate simbolurile in care merge S
+    for (const auto& production : productions)
+    {
+        if (production.first[0] == startSymbol)
+        {
+            for (const char& symbol : production.second)
+            {
+                if (std::count(reachableSymbols.begin(), reachableSymbols.end(), symbol) == 0)
+                {
+                    reachableSymbols.push_back(symbol);
+                }
+            }
+        }
+    }
+    bool changed = true;
+    while (changed)
+    {
+        changed = false;
+        for (const auto& production : productions)
+        {
+            if (std::count(reachableSymbols.begin(), reachableSymbols.end(), production.first[0]) != 0)
+            {
+                for (const char& symbol : production.second)
+                {
+                    if (std::count(reachableSymbols.begin(), reachableSymbols.end(), symbol) == 0)
+                    {
+                        reachableSymbols.push_back(symbol);
+                        changed = true;
+                    }
+                }
+            }
+        }
+    }
+    std::vector<std::pair<std::string, std::string>> newProductions;
+    for (const auto& production : productions)
+    {
+        bool ok = true;
+        if (std::count(reachableSymbols.begin(), reachableSymbols.end(), production.first[0]) == 0)
+        {
+            ok = false;
+        }
+        for (const char& symbol : production.second)
+        {
+            if (std::count(reachableSymbols.begin(), reachableSymbols.end(), symbol) == 0)
+            {
+                ok = false;
+            }
+        }
+        if (ok)
+        {
+            newProductions.push_back(production);
+        }
+    }
+    //sterg productile si simbolurile useless
+    std::vector<char>newNonTerminals, newTerminals;
+    for (const auto& symbol : reachableSymbols)
+    {
+        if (std::count(nonTerminal.begin(), nonTerminal.end(), symbol))
+        {
+            newNonTerminals.push_back(symbol);
+        }
+        else
+        {
+            newTerminals.push_back(symbol);
+        }
+    }
+    productions = newProductions;
+    terminal = newTerminals;
+    nonTerminal = newNonTerminals;
 }
 
 void Grammar::PrintGrammar() {

@@ -8,9 +8,10 @@
 
 int main()
 {
-	/*//Grammar g({ 'S','A' }, { 'a','b' }, 'S', { {"S","abS"},{"S","aSAb"},{"S","aA"}, {"A","aAb"},{"A","a"}});
+	//Grammar g({ 'S','A' }, { 'a','b' }, 'S', { {"S","abS"},{"S","aSAb"},{"S","aA"}, {"A","aAb"},{"A","a"}});
 	Grammar g({ 'S','A','B','C','D' }, { 'a','b' }, { 'S' }, { { "S","A" }, { "S","B" }, { "A","aB" }, { "A","bS" }, { "A","b" }, { "B","BD" }, { "B","Ba" }, { "C","AS" }, { "C","b" }, { "D","bD" }, { "D","b" } });
 	//Grammar g({ 'S','L','T' }, { 'a','b','+','*','[',']' }, 'S', { {"S","T+S"},{"S","T"},{"T","L*T"},{"T","L"},{"L","[S]"},{"L","a"},{"L","b"} });
+	//Grammar g({ 'S','A','B','C','E' }, { 'a','c','e' }, { 'S' }, { {"S","AC"},{"S","B"},{"A","a"},{"C","c"},{"C","BC"},{"E","aE"},{"E","e"} });
 	if (g.isContextFree())
 	{
 		std::cout << "DA" << "\n";
@@ -21,10 +22,9 @@ int main()
 	}
 	std::cout << g;
 	std::cout << "\n";
-	//g.removeUnitProductions();
-	//g.reduceCFG();*/
-
-	std::vector<PushdownAutomaton::Transition> map;
+	g.simplifyCFG();
+	std::cout << g;
+	/*std::vector<PushdownAutomaton::Transition> map;
 	PushdownAutomaton::Transition trans;
 
 	trans.from_state = 0;
@@ -65,7 +65,7 @@ int main()
 	map.emplace_back(trans);
 
 
-	PushdownAutomaton pda({ 0,1,2,3 }, { 'a', 'b',epsilon }, { 'A', '$', epsilon}, 0, {3}, map);
+	PushdownAutomaton pda({ 0,1,2,3 }, { 'a', 'b',epsilon }, { 'A', '$', epsilon}, 0, {3}, map);*/
 
 	//std::cout << pda.process_input("aaabbb");
 
