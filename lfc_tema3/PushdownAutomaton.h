@@ -1,34 +1,37 @@
-﻿#ifndef PUSHDOWN_AUTOMATON_H
-#define PUSHDOWN_AUTOMATON_H
-
-#include <stack>
-#include <unordered_map>
-#include <vector>
+﻿#pragma once
 #include <string>
+#include <stack>
+#include <map>
+#include <iostream>
+#include <vector>
 
-#define epsilon 'ε'
-
-class PushdownAutomaton {
+class PushDownAutomaton
+{
+	std::string m_stari;
+	std::string m_alfabrt;
+	std::string m_stackAlfabet;
+	std::map<std::tuple<char, char, char>, std::vector<std::pair<char, std::string>>> m_tranzactii;
+	char m_stareaInitiala;
+	char m_primulStackChar;
 public:
-    struct Transition {
-        int from_state;
-        char input_symbol;
-        char stack_symbol;
-        int to_state;
-        std::string push_symbols;
-    };
+	PushDownAutomaton();
+	bool CheckWord(std::string word);
+	void checkword2(int index, std::string word, std::stack<char> m_stack, bool& ok);
+	bool IsDeterminist();
 
-    PushdownAutomaton(std::vector<int> states, std::vector<char> input_symbols,
-        std::vector<char> stack_symbols, int start_state,
-        std::vector<int> accept_states, std::vector<Transition> transitions);
-    //bool process_input(std::string input);
+	void SetStari(const std::string& stari);
+	void SetAlfabet(const std::string& alfabet);
+	void SetStackAlfabet(const std::string& stack_alfabet);
+	void SetStareInitiala(const char& stare_initiala);
+	void SetPrimulStachChar(const char& primul_stack_char);
+	std::string GetStari() const;
+	std::string GetAlfabet() const;
+	std::string GetStackAlfabet() const;
+	char GetStareInitiala() const;
+	char GetPrimulStackChar() const;
+	std::map<std::tuple<char, char, char>, std::vector<std::pair<char, std::string>>>GetTranzitii();
+	void AddTranzitii(const std::tuple<char, char, char>& trans, const std::pair<char, std::string>& result);
+	friend std::ostream& operator<<(std::ofstream& out, PushDownAutomaton pd);
+	~PushDownAutomaton();
 
-private:
-    std::vector<int> states_;
-    std::unordered_map<int, std::unordered_map<char, std::vector<Transition>>> transitions_;
-    std::stack<char> stack_;
-    int current_state_;
-    std::vector<int> accept_states_;
 };
-
-#endif
