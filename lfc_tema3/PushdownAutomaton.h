@@ -14,7 +14,7 @@ class PushDownAutomaton
 	char m_stareaInitiala;
 	char m_primulStackChar;
 public:
-	PushDownAutomaton();
+	PushDownAutomaton() = default;
 	bool CheckWord(std::string word);
 	void checkword2(int index, std::string word, std::stack<char> m_stack, bool& ok);
 	bool IsDeterminist();

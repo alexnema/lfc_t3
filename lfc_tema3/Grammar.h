@@ -21,6 +21,8 @@ public:
     friend std::istream& operator>>(std::istream& in, Grammar& g);
     bool isContextFree() const;
     void simplifyCFG();
+    bool verifyChomsky(std::pair<std::string, std::string> production);
+    void convertToNFC();
 
 private:
     bool containsStartSymbolAlone() const;

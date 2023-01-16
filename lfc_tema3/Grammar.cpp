@@ -174,6 +174,32 @@ void Grammar::simplifyCFG()
     removeUnreachableSymbols();
 }
 
+bool Grammar::verifyChomsky(std::pair<std::string, std::string> production)
+{
+    //daca e de forma A->BC sau A->a
+    if (production.second.size() == 2)
+    {
+        if (std::count(nonTerminal.begin(), nonTerminal.end(), production.second[0]) && std::count(nonTerminal.begin(), nonTerminal.end(), production.second[0]))
+        {
+            return true;
+        }
+    }
+    else
+        if (production.second.size() == 1)
+        {
+            if (std::count(terminal.begin(), terminal.end(), production.second[0]))
+            {
+                return true;
+            }
+        }
+    return false;
+}
+
+void Grammar::convertToNFC()
+{
+}
+
+
 void Grammar::removeSymbolsThatDontGenerateTerminals()
 {
     std::vector<char>usefulNonTerminals;
