@@ -1,5 +1,9 @@
 #include "PushDownAutomaton.h"
 
+PushDownAutomaton::PushDownAutomaton(std::string stari, std::string alfabet, std::string stackAlfabet, std::map<std::tuple<char, char, char>, std::vector<std::pair<char, std::string>>> tranzitii, char stareaInitiala)
+	:m_stari{ stari }, m_alfabrt{ alfabet }, m_stackAlfabet{ stackAlfabet }, m_tranzactii{ tranzitii }, m_stareaInitiala{ stareaInitiala }
+{}
+
 bool PushDownAutomaton::CheckWord(std::string word)
 {
 	std::stack<char> m_stack;
@@ -21,6 +25,8 @@ void PushDownAutomaton::checkword2(int index, std::string word, std::stack<char>
 		return;
 	}
 	if (index >= word.size())
+		return;
+	if (std::find(this->m_alfabrt.begin(), this->m_alfabrt.end(), word[index]) == this->m_alfabrt.end())
 		return;
 	std::vector<std::pair<char, std::string>> vector_tranz = m_tranzactii[{'0', word[index], m_stack.top()}];
 	m_stack.pop();

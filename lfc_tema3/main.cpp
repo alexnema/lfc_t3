@@ -11,7 +11,12 @@ int main()
 	Grammar grammar({ 'S','A','B','C','D' }, { 'a','b' }, { 'S' }, { { "S","A" }, { "S","B" }, { "A","aB" }, { "A","bS" }, { "A","b" }, { "B","BD" }, { "B","Ba" }, { "C","AS" }, { "C","b" }, { "D","bD" }, { "D","b" } });
 	//Grammar grammar({ 'S','L','T' }, { 'a','b','+','*','[',']' }, 'S', { {"S","T+S"},{"S","T"},{"T","L*T"},{"T","L"},{"L","[S]"},{"L","a"},{"L","b"} });
 	//Grammar grammar({ 'S','A','B','C','E' }, { 'a','c','e' }, { 'S' }, { {"S","AC"},{"S","B"},{"A","a"},{"C","c"},{"C","BC"},{"E","aE"},{"E","e"} });
+	std::map<std::tuple<char, char, char>, std::vector<std::pair<char, std::string>>> tranzitii;
+	tranzitii[{'0', 'a', 'Z'}] = { {'1', "AZ"}};
+	tranzitii[{'1', 'a', 'A'}] = { {'2', "AA"} };
+	tranzitii[{'2', 'a', 'A'}] = { {'2', "AA"} };
 
+	PushDownAutomaton pd("0,1,2", "a,b", "Z0,A", tranzitii, '0');
 	int options = 0;
 	do
 	{
@@ -19,7 +24,6 @@ int main()
 		std::cout << "Alegeti optiunea: ";
 		std::cin >> options;
 		std::string word;
-		PushDownAutomaton pd;
 		switch (options)
 		{
 		case 1:
@@ -56,7 +60,7 @@ int main()
 			break;
 		}
 	} while (options != 0);
-
+	
 
 	return 0;
 }

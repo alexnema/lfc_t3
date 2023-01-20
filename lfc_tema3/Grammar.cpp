@@ -104,16 +104,12 @@ bool Grammar::verifyProduction(unsigned int index) const
     {
         return false;
     }
-    //right - a combination of terminal and non - terminal symbols, possibly including the empty string.
+    //right - a combination of terminal and non - terminal symbols
     for (const auto& symbol : currentProduction.second)
     {
-        if (currentProduction.second.empty());
-        else
-        {
             if (std::count(terminal.begin(), terminal.end(), symbol) == 0 && std::count(nonTerminal.begin(), nonTerminal.end(), symbol) == 0) {
                 return false;
             }
-        }
     }
     return true;
 }
@@ -172,31 +168,6 @@ void Grammar::simplifyCFG()
     removeUnitProductions();
     removeSymbolsThatDontGenerateTerminals();
     removeUnreachableSymbols();
-}
-
-bool Grammar::verifyChomsky(std::pair<std::string, std::string> production)
-{
-    //daca e de forma A->BC sau A->a
-    if (production.second.size() == 2)
-    {
-        if (std::count(nonTerminal.begin(), nonTerminal.end(), production.second[0]) && std::count(nonTerminal.begin(), nonTerminal.end(), production.second[0]))
-        {
-            return true;
-        }
-    }
-    else
-        if (production.second.size() == 1)
-        {
-            if (std::count(terminal.begin(), terminal.end(), production.second[0]))
-            {
-                return true;
-            }
-        }
-    return false;
-}
-
-void Grammar::convertToNFC()
-{
 }
 
 

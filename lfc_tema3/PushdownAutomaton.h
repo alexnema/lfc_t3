@@ -15,6 +15,7 @@ class PushDownAutomaton
 	char m_primulStackChar;
 public:
 	PushDownAutomaton() = default;
+	PushDownAutomaton(std::string stari, std::string alfabet, std::string stackAlfabet, std::map<std::tuple<char, char, char>, std::vector<std::pair<char, std::string>>> tranzitii, char stareaInitiala);
 	bool CheckWord(std::string word);
 	void checkword2(int index, std::string word, std::stack<char> m_stack, bool& ok);
 	bool IsDeterminist();
@@ -31,7 +32,7 @@ public:
 	char GetPrimulStackChar() const;
 	std::map<std::tuple<char, char, char>, std::vector<std::pair<char, std::string>>>GetTranzitii();
 	void AddTranzitii(const std::tuple<char, char, char>& trans, const std::pair<char, std::string>& result);
-	friend std::ostream& operator<<(std::ofstream& out, PushDownAutomaton pd);
+	friend std::ostream& operator<<(std::ostream& out, PushDownAutomaton pd);
 	~PushDownAutomaton();
 
 };
